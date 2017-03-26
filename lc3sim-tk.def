@@ -762,7 +762,7 @@ proc open_lc3channel {sock ip_addr port} {
         error "contacted by bad IP address (not loopback)"
     }
     set lc3_console $sock
-    fconfigure $lc3_console -blocking 0 -buffering none
+    fconfigure $lc3_console -blocking 0 -buffering none -translation lf
     fileevent $lc3_console readable read_lc3
 }
 
@@ -781,7 +781,11 @@ pack .console.t -expand t -fill both
 
 bind .console <KeyPress> {
     if {"%A" != ""} {
-	puts -nonewline $lc3_console %A
+	if {"%A" != "\r"} {
+	    puts -nonewline $lc3_console %A
+	} else {
+	    puts $lc3_console ""
+	}
     }
 }
 
