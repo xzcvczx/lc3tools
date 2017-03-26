@@ -200,7 +200,8 @@ CCODE    [Nn]?[Zz]?[Pp]?
 REGISTER [rR][0-7]
 HEX      [xX][-]?[0-9a-fA-F]+
 DECIMAL  [#]?[-]?[0-9]+
-IMMED    {HEX}|{DECIMAL}
+BINARY   [b][0-1]+
+IMMED    {HEX}|{DECIMAL}|{BINARY}
 LABEL    [A-Za-z][A-Za-z_0-9]*
 STRING   \"([^\"]*|(\\\"))*\"
 UTSTRING \"[^\n\r]*
@@ -464,9 +465,11 @@ read_val (const char* s, int* vptr, int bits)
     char* trash;
     long v;
 
-    if (*s == 'x' || *s == 'X')
+    if (*s == 'x' || *s == 'X') {
 	v = strtol (s + 1, &trash, 16);
-    else {
+    } else if (*s == 'b') {
+	v = strtol (s + 1, &trash, 2);
+    } else {
 	if (*s == '#')
 	    s++;
 	v = strtol (s, &trash, 10);
